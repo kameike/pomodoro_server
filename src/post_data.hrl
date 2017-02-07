@@ -1,0 +1,2 @@
+-record(timer, {timing, post_data}).
+-record(post_data, {url, content}).
