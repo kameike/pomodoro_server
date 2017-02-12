@@ -10,13 +10,10 @@ start_timer(Timer) ->
   spawn(fun() -> start(Timer) end).
 
 start(Timer) ->
-  util:puts("start timer!!"),
   receive
-    {Ref, cancel} ->
-      util:puts("canceled"),
-      Ref ! {self(), ok}
+    cancel ->
+      ok
   after Timer#timer.timing ->
-          util:puts("timing!!"),
           post(Timer#timer.post_data)
   end.
 

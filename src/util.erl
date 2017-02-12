@@ -5,8 +5,15 @@
          time/0
         ]).
 
+-ifndef(EUNIT).
 puts(Value) -> 
   io:format("~n~p", [Value]).
+-endif.
+
+-ifdef(EUNIT).
+puts(Value) -> 
+  io:format(user, "~p~n", [Value]).
+-endif.
 
 time() ->
   ok.
