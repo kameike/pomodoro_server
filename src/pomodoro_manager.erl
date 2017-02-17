@@ -24,7 +24,6 @@
          handle_cast/2
         ]).
 
-
 %% Clients APIs
 
 create_pomodoro_manager() ->
@@ -51,7 +50,7 @@ handle_info(_, _) ->
   ok.
 
 handle_cast({start, Timers, UserID}, UserIDMap) ->
-  Pids = start_timer(Timers),
+  Pids = start_timer(Timers, UserID),
   Map2 = maps:put(UserID, Pids, UserIDMap),
   {noreply, Map2};
 handle_cast({cancel, UserID}, UserIDMap) ->
@@ -71,8 +70,8 @@ terminate(_, _) ->
 
 %% Private methos
 
-start_timer(Timers) ->
-  lists:map(fun post_timer:start_timer/1, Timers).
+start_timer(Timers, UserID) ->
+  lists:map(fun(Data)-> post_timer:start_timer(Data, UserID) end, Timers).
 
 cancel_timer(not_found) -> 
   ok;
@@ -83,45 +82,41 @@ cancel_timer(Pids) ->
 
 -ifdef(EUNIT).
 
+list_of_timer() ->
+  [
+   test_factory:dummy_timer(),
+   test_factory:dummy_timer(),
+   test_factory:dummy_timer()
+  ].
+
+list_of_dummy_pids() ->
+  #{test_factory:user_id() => [
+                  spawn(fun() -> ok end),
+                  spawn(fun() -> ok end),
+                  spawn(fun() -> ok end)
+                 ]}.
+
 handle_start_cast_test() ->
-  UserID = "userid",
-  Timers = [
-            #timer{timing = 3600, post_data = <<"dummy_data">>},
-            #timer{timing = 3600, post_data = <<"dummy_data">>},
-            #timer{timing = 3600, post_data = <<"dummy_data">>}
-           ],
-  Result = handle_cast({start, Timers, UserID}, #{}),
-  ?assertMatch(
-     {noreply, #{UserID := _}},
-     Result
-    ),
+  UserID = test_factory:user_id(),
+  Result = handle_cast({start, list_of_timer(), UserID}, #{}),
+  ?assertMatch({noreply, #{UserID := _}}, Result),
   {noreply, #{UserID := Pids}} = Result,
   ?assert(is_list(Pids)),
-  lists:map(fun is_pid/1, Pids),
+  lists:map(
+    fun(Pid)-> ?assert(is_pid(Pid)) end,
+    Pids),
   ok.
 
 handle_cancel_cast_with_expected_user_id_test() ->
-  UserID = "userid",
-  DummyPids = [
-               spawn(fun() -> ok end),
-               spawn(fun() -> ok end),
-               spawn(fun() -> ok end)
-              ],
-  UserIDMap = #{UserID => DummyPids},
-  Result = handle_cast({cancel, UserID}, UserIDMap),
+  UserID = test_factory:user_id(),
+  Result = handle_cast({cancel, UserID}, list_of_dummy_pids()),
   {noreply, NewUserIdMap} = Result,
-  ?assertEqual(
-     0,
-     maps:size(NewUserIdMap)
-    ),
+  ?assertEqual(0, maps:size(NewUserIdMap)),
   ok.
 
 handle_cancel_cast_with_unexpected_user_id_test() ->
   {noreply, NewUserIDMap} = handle_cast({cancel, "unknown_user"}, #{}),
-  ?assertEqual(
-     0,
-     maps:size(NewUserIDMap)
-    ).
+  ?assertEqual(0, maps:size(NewUserIDMap)).
 
 -endif.
 

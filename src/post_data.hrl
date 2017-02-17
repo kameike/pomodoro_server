@@ -1,2 +1,2 @@
--record(timer, {timing, post_data}).
+-record(timer, {start_date_time, duration, post_data, user_id}).
 -record(post_data, {url, content}).

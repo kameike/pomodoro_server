@@ -34,7 +34,7 @@ create_timers_from(Req) ->
   lists:map(fun create_timer/1, element(1, jiffy:decode(Body))).
 
 create_timer({Label, Content}) ->
-  #timer{timing = hock_timing(Label), post_data = parse_post_content(Content)};
+  #timer{duration = hock_timing(Label), post_data = parse_post_content(Content)};
 create_timer(_) ->
   ok.
 

@@ -1,0 +1,23 @@
+{
+  "name": "pomodoro_server_ci",
+  "version": "1.0.0",
+  "description": "server =====",
+  "main": "index.js",
+  "scripts": {
+    "watch": "node util/watcher.js watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kameike/pomodoro_server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kameike/pomodoro_server/issues"
+  },
+  "homepage": "https://github.com/kameike/pomodoro_server#readme",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-shell": "^0.5.2"
+  }
+}

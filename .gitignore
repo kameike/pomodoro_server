@@ -6,6 +6,7 @@ _*
 *.plt
 *.swp
 *.swo
+node_modules/
 .erlang.cookie
 ebin
 log
