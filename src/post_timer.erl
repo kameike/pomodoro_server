@@ -5,42 +5,34 @@
 -endif.
 
 -export([
-         cancel_post_timer/1,
+         cancel_timer/1,
          start_timer/1
         ]).
 
--export([
-         finish/1
-        ]).
+%interface
+start_timer(TimerSeed) -> spawn(fun()-> start_timer_from(TimerSeed) end).
 
-start_timer(Timer) ->
-  spawn(fun()-> start(Timer) end).
+cancel_timer(Pid) ->
+  Pid ! cancel,
+  ok.
+
+%private
+start_timer_from(#timer_seed{duration = Duration, done_events = DoneEvents}) -> 
+  #timer{
+    duration = Duration,
+    done_events = DoneEvents,
+    start_date_time = 0
+    }.
 
 start(Timer) ->
   receive
     cancel ->
       ok
   after Timer#timer.duration ->
-          handle(Timer#timer.done_events),
+          handle_events(Timer#timer.done_events),
           ok
   end.
-
-finish(_) ->
-  ok.
-
-cancel_post_timer(Pid) ->
-  Pid ! cancel,
-  ok.
-
-handle(done_event) ->
-  ok.
-
-post(#post_data{url = Url, content = Content}) ->
-  httpc:request(
-    post, 
-    { Url, [], "application/json", Content },
-    [], []),
-  ok.
+handle_events(DoneEvents) -> lists:foreach(fun(Event) -> event_handler:execute(Event) end,DoneEvents).
 
 -ifdef(EUNIT).
 

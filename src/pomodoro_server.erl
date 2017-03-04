@@ -31,11 +31,13 @@ cancel_pomodoro(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).
 skip_rest(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).
 
 %% gen_server behaviors
-handle_call(_, _From, State) ->
-  {reply, ok, State}.
+init(State) -> {ok, State}.
+terminate(_, _) -> ok.
 
-handle_info(_, _) ->
-  ok.
+handle_call(_, _From, State) -> {reply, ok, State}.
+handle_info(_, _) -> ok.
+
+code_change(_OldVsn, State, _Extra) -> {ok, State}.
 
 handle_cast({start, TimerSeeds, UserID}, UserIDMap) ->
   cancel_timer(maps:find(UserID, UserIDMap)),
@@ -47,22 +49,11 @@ handle_cast({cancel, UserID}, UserIDMap) ->
   Map2 = maps:remove(UserID, UserIDMap),
   {noreply, Map2}.
 
-code_change(_OldVsn, State, _Extra) ->
-  {ok, State}.
-
-init(State) ->
-  {ok, State}.
-
-terminate(_, _) ->
-  ok.
-
 %% Private methos
-cancel_timer({ok, Timers}) -> lists:map(fun(Timer) -> timer:cancel(Timer) end, Timers);
+cancel_timer({ok, Timers}) -> lists:map(fun(Timer) -> timer:cancel_timer(Timer) end, Timers);
 cancel_timer(error) -> ok.
 
 start_timers(Timers) -> lists:map(fun(Timer)-> post_timer:start_timer(Timer) end, Timers).
-
-
 
 -ifdef(EUNIT).
 
@@ -73,22 +64,17 @@ list_of_timer() ->
    test_factory:dummy_timer()
   ].
 
-list_of_dummy_pids() ->
-    #{test_factory:user_id() => [
-                                 spawn(fun() -> ok end),
-                                 spawn(fun() -> ok end),
-                                 spawn(fun() -> ok end)
-                                ]}.
+list_of_dummy_pids() -> #{test_factory:user_id() => [ spawn(fun() -> ok end), spawn(fun() -> ok end), spawn(fun() -> ok end) ]}.
 
 handle_start_cast_test() ->
   UserID = test_factory:user_id(),
   Result = handle_cast({start, list_of_timer(), UserID}, #{}),
   ?assertMatch({noreply, #{UserID := _}}, Result),
+
   {noreply, #{UserID := Pids}} = Result,
   ?assert(is_list(Pids)),
-  lists:map(
-    fun(Pid)-> ?assert(is_pid(Pid)) end,
-    Pids),
+
+  lists:map( fun(Pid)-> ?assert(is_pid(Pid)) end, Pids),
   ok.
 
 handle_cancel_cast_with_expected_user_id_test() ->
