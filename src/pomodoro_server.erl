@@ -1,4 +1,4 @@
--module(pomodoro_manager).
+-module(pomodoro_server).
 -behavior(gen_server).
 
 -ifdef(EUNIT).
