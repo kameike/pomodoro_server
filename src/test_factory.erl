@@ -7,7 +7,11 @@
         ]).
 
 dummy_timer() ->
-  #timer{duration = 3600, post_data = <<"dummy_data">>}.
+  #timer{
+     start_date_time = erlang:localtime(),
+     duration = 3600,
+     done_events = []
+    }.
 
 user_id() ->
   "hogehoge".

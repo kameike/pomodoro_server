@@ -1,0 +1,32 @@
+{
+  "property": {
+    "work_duration": 2250,
+    "rest_duration": 500
+  },
+  "event": {
+    "start": [{
+      "type": "post_slack",
+      "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
+      "content": {
+        "text": "ポモドーロをがんばってくださいね！", 
+        "icon_emoji": ":tomato:"
+      }
+    }], 
+    "work_done": [{
+      "type": "post_slack",
+      "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
+      "content": {
+        "text": "ポモドーロが終わりましたよ！", 
+        "icon_emoji": ":tomato:"
+      }
+    }],
+    "rest_done": [{
+      "type": "post_slack",
+      "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
+      "content": {
+        "text": "ふたたび頑張るときです！", 
+        "icon_emoji": ":tomato:"
+      }
+    }]
+  }
+}

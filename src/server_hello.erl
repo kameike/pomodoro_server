@@ -14,13 +14,6 @@ accept_post(Req, State) ->
   {ok, Body, _} = cowboy_req:read_body(Req),
   PostContent = jiffy:decode(Body),
   io:format("~p~n", [PostContent]),
-%  {[
-%    {<<"start_hock">>, StartUrl},
-%    {<<"rest_hock">>, RestUrl},
-%    {<<"done_hock">>, DoneUrl}
-%   ]} = PostContent,
-%  
-%  io:format("~p~n~p~n~p~n", [StartUrl, RestUrl, DoneUrl]),
   {true, Req, State}.
 
 content_types_accepted(Req, State) ->

@@ -1,0 +1,67 @@
+
+
+// request status of timer
+{
+  [
+    "state": "work",
+    "start": "JST: 2016/5/6 18:19",
+    "duration": 2700
+    "property": {
+      "work": 1250,
+      "rest": 600
+    }
+  ]
+}
+
+// request history of timer
+{[
+  {
+    "id": "cCse63cReMeAsea",
+    "start": "JST: 2016/5/6 18:19",
+    "property": { "work": 1250, "rest": 600 }
+  },
+  {
+    "id": "cCse63cReMeAsea",
+    "start": "JST: 2016/5/6 18:19",
+    "property": { "work": 1250, "rest": 600 }
+  },
+  {
+    "id": "cCse63cReMeAsea",
+    "start": "JST: 2016/5/6 18:19",
+    "property": { "work": 1250, "rest": 600 }
+  }
+]}
+
+
+{
+  "property": {
+    "work": 1250,
+    "rest": 600
+  },
+  "event": {
+    "start": [{
+      "type": "post_slack"
+      "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
+      "content": {
+        "text": "ポモドーロをがんばってくださいね！", 
+        "icon_emoji": ":tomato:"
+      }
+    }], 
+    "work_done": [{
+      "type": "post_slack"
+      "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
+      "content": {
+        "text": "ポモドーロが終わりましたよ！", 
+        "icon_emoji": ":tomato:"
+      }
+    }],
+    "rest_done": [{
+      "type": "post_slack"
+      "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
+      "content": {
+        "text": "ふたたび頑張るときです！", 
+        "icon_emoji": ":tomato:"
+      }
+    }]
+  }
+}

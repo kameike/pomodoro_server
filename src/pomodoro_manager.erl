@@ -24,8 +24,7 @@
          handle_cast/2
         ]).
 
-%% Clients APIs
-
+% Clients APIs
 create_pomodoro_manager() ->
   gen_server:start(pomodoro_manager, [#{}], []).
 
@@ -50,7 +49,7 @@ handle_info(_, _) ->
   ok.
 
 handle_cast({start, Timers, UserID}, UserIDMap) ->
-  Pids = start_timer(Timers, UserID),
+  Pids = start_timer(Timers),
   Map2 = maps:put(UserID, Pids, UserIDMap),
   {noreply, Map2};
 handle_cast({cancel, UserID}, UserIDMap) ->
@@ -69,9 +68,8 @@ terminate(_, _) ->
   ok.
 
 %% Private methos
-
-start_timer(Timers, UserID) ->
-  lists:map(fun(Data)-> post_timer:start_timer(Data, UserID) end, Timers).
+start_timer(Timers) ->
+  lists:map(fun(Timer)-> post_timer:start_timer(Timer) end, Timers).
 
 cancel_timer(not_found) -> 
   ok;
@@ -90,11 +88,11 @@ list_of_timer() ->
   ].
 
 list_of_dummy_pids() ->
-  #{test_factory:user_id() => [
-                  spawn(fun() -> ok end),
-                  spawn(fun() -> ok end),
-                  spawn(fun() -> ok end)
-                 ]}.
+    #{test_factory:user_id() => [
+                                 spawn(fun() -> ok end),
+                                 spawn(fun() -> ok end),
+                                 spawn(fun() -> ok end)
+                                ]}.
 
 handle_start_cast_test() ->
   UserID = test_factory:user_id(),
