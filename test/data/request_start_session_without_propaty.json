@@ -1,8 +1,4 @@
 {
-  "property": {
-    "work_duration": 3000,
-    "rest_duration": 500
-  },
   "event": {
     "start": [{
       "type": "post_slack",

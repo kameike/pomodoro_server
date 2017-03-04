@@ -21,15 +21,5 @@ allowed_methods(Req, State) ->
   {[<<"POST">> ], Req, State}.
 
 accept_post(Req, State) ->
-  Timers = create_timers_from(Req),
-  SessionID = 'nil',
-  Json = {[{<<"sesion_id">>, SessionID}]},
-  Req2 = cowboy_req:set_resp_body(jiffy:encode(Json), Req),
-  {true, Req2, State}.
-
-% pearse object to timer objecct
-
-create_timers_from(Req) ->
-  {ok, Body, _} = cowboy_req:read_body(Req),
-  %% lists:map(fun create_timer/1, element(1, jiffy:decode(Body))).
-  request_parser:create_timers(jiffy:decode(Body)).
+  request_parser:create_timers(Req),
+  {true, Req, State}.
