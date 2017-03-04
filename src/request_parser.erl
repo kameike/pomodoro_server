@@ -32,7 +32,7 @@ work_start_timer_seed_from_json(JsonData, _UserID) ->
 
   #timer_seed{
      duration = 0,
-     done_events = Events
+     done_events = timer_event_parser:parse_events(Events)
   }.
 
 rest_done_timer_seed_from_json(JsonData, _UserID) ->
@@ -42,12 +42,12 @@ rest_done_timer_seed_from_json(JsonData, _UserID) ->
 
   #timer_seed{
      duration = WorkDuration + RestDuration,
-     done_events = Events
+     done_events = timer_event_parser:parse_events(Events)
   }.
 
 work_done_timer_seed_from_json(JsonData, UserID) ->
   CompleteSessionEvent = #{
-    type => "complete_session",
+    type => complete_session,
     data => #{ user_id => UserID }
    },
 
@@ -57,7 +57,7 @@ work_done_timer_seed_from_json(JsonData, UserID) ->
 
   #timer_seed{
      duration = Duration,
-     done_events = lists:append([CompleteSessionEvent], Events)
+     done_events = timer_event_parser:parse_events(lists:append(Events, [CompleteSessionEvent]))
   }.
 
 get_property({ok, Data}) when is_map(Data) ->

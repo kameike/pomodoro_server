@@ -4,11 +4,6 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
-
-
-
-
-
 -export([
          cancel_post_timer/1,
          start_timer/1
