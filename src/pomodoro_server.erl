@@ -25,36 +25,25 @@
         ]).
 
 % Clients APIs
-create_pomodoro_manager() ->
-  gen_server:start(pomodoro_manager, [#{}], []).
-
-start_pomodoro(UserID, Timers) ->
-  gen_server:cast(pmodoro_manager, {cancel, Timers, UserID}),
-  ok.
-
-cancel_pomodoro(UserID) ->
-  gen_server:cast(pmodoro_manager, {cancel, UserID}),
-  ok.
-
-skip_rest(UserID) ->
-  gen_server:cast(pmodoro_manager, {cancel, UserID}),
-  ok.
+create_pomodoro_manager() -> gen_server:start(pomodoro_manager, [#{}], []).
+start_pomodoro(UserID, Timers) -> gen_server:cast(pmodoro_manager, {cancel, Timers, UserID}).
+cancel_pomodoro(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).
+skip_rest(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).
 
 %% gen_server behaviors
-
 handle_call(_, _From, State) ->
   {reply, ok, State}.
 
 handle_info(_, _) ->
   ok.
 
-handle_cast({start, Timers, UserID}, UserIDMap) ->
-  Pids = start_timer(Timers),
+handle_cast({start, TimerSeeds, UserID}, UserIDMap) ->
+  cancel_timer(maps:find(UserID, UserIDMap)),
+  Pids = start_timers(TimerSeeds),
   Map2 = maps:put(UserID, Pids, UserIDMap),
   {noreply, Map2};
 handle_cast({cancel, UserID}, UserIDMap) ->
-  Pids = maps:get(UserID, UserIDMap, not_found),
-  cancel_timer(Pids),
+  cancel_timer(maps:find(UserID, UserIDMap)),
   Map2 = maps:remove(UserID, UserIDMap),
   {noreply, Map2}.
 
@@ -68,14 +57,11 @@ terminate(_, _) ->
   ok.
 
 %% Private methos
-start_timer(Timers) ->
-  lists:map(fun(Timer)-> post_timer:start_timer(Timer) end, Timers).
+cancel_timer({ok, Timers}) -> lists:map(fun(Timer) -> timer:cancel(Timer) end, Timers);
+cancel_timer(error) -> ok.
 
-cancel_timer(not_found) -> 
-  ok;
-cancel_timer(Pids) ->
-  lists:map(fun(Pid) -> Pid ! stop end, Pids),
-  ok.
+start_timers(Timers) -> lists:map(fun(Timer)-> post_timer:start_timer(Timer) end, Timers).
+
 
 
 -ifdef(EUNIT).

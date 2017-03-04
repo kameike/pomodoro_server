@@ -19,7 +19,6 @@
 pomodoro_manager_of(User) ->
   ok.
 
-
 %% gen_server behaviors
 
 handle_call(_, _From, State) ->
