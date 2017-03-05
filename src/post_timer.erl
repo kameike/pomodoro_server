@@ -18,11 +18,12 @@ cancel_timer(Pid) ->
 
 %private
 start_timer_from(#timer_seed{duration = Duration, done_events = DoneEvents}) -> 
-  #timer{
+  Timer = #timer{
     duration = Duration,
     done_events = DoneEvents,
     start_date_time = 0
-    }.
+    },
+  start(Timer).
 
 start(Timer) ->
   receive
@@ -32,7 +33,8 @@ start(Timer) ->
           handle_events(Timer#timer.done_events),
           ok
   end.
-handle_events(DoneEvents) -> lists:foreach(fun(Event) -> event_handler:execute(Event) end,DoneEvents).
+
+handle_events(DoneEvents) -> lists:foreach(fun(Event) -> event_handler:execute(Event) end, DoneEvents).
 
 -ifdef(EUNIT).
 
