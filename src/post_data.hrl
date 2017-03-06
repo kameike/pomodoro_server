@@ -1,5 +1,5 @@
 -record(timer, {
-          start_date_time,
+          start_time,
           duration,
           done_events
          }).
