@@ -5,7 +5,7 @@
   },
   "event": {
     "start": [{
-      "type": "post_slack",
+      "type": "post_hock",
       "data": {
         "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
         "content": {
@@ -15,9 +15,8 @@
       }
     }], 
     "work_done": [{
-      "type": "post_slack",
+      "type": "post_hock",
       "data": {
-        "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
         "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
         "content": {
           "text": "ポモドーロが終わりましたよ！", 
@@ -26,7 +25,7 @@
       }
     }],
     "rest_done": [{
-      "type": "post_slack",
+      "type": "post_hock",
       "data": {
         "hock_path": "XXXXXXXXX/XXXXXXXXX/xxxxxxxxxxxxxxxxxxxxxxxx",
         "content": {

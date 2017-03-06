@@ -1,11 +1,6 @@
 -module(pomodoro_server).
 -behavior(gen_server).
 
--ifdef(EUNIT).
--include_lib("eunit/include/eunit.hrl").
--include("post_data.hrl").
--endif.
-
 %% Client APIs
 -export([
          create_pomodoro_manager/0,
@@ -50,18 +45,20 @@ handle_cast({cancel, UserID}, UserIDMap) ->
   {noreply, Map2}.
 
 %% Private methos
-cancel_timer({ok, Timers}) -> lists:map(fun(Timer) -> timer:cancel_timer(Timer) end, Timers);
+cancel_timer({ok, Timers}) -> lists:map(fun(Timer) -> post_timer:cancel_timer(Timer) end, Timers);
 cancel_timer(error) -> ok.
 
 start_timers(Timers) -> lists:map(fun(Timer)-> post_timer:start_timer(Timer) end, Timers).
 
 -ifdef(EUNIT).
+-include_lib("eunit/include/eunit.hrl").
+-include("post_data.hrl").
 
 list_of_timer() ->
   [
-   test_factory:dummy_timer(),
-   test_factory:dummy_timer(),
-   test_factory:dummy_timer()
+   test_factory:dummy_timer_seed(),
+   test_factory:dummy_timer_seed(),
+   test_factory:dummy_timer_seed()
   ].
 
 list_of_dummy_pids() -> #{test_factory:user_id() => [ spawn(fun() -> ok end), spawn(fun() -> ok end), spawn(fun() -> ok end) ]}.

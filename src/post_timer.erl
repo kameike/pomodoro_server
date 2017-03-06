@@ -1,9 +1,5 @@
 -module(post_timer).
 -include("post_data.hrl").
--ifdef(EUNIT).
--include_lib("eunit/include/eunit.hrl").
--endif.
-
 -export([
          cancel_timer/1,
          start_timer/1
@@ -19,10 +15,10 @@ cancel_timer(Pid) ->
 %private
 start_timer_from(#timer_seed{duration = Duration, done_events = DoneEvents}) -> 
   Timer = #timer{
-    duration = Duration,
-    done_events = DoneEvents,
-    start_date_time = 0
-    },
+             duration = Duration,
+             done_events = DoneEvents,
+             start_date_time = erlang:localtime()
+            },
   start(Timer).
 
 start(Timer) ->
@@ -37,9 +33,10 @@ start(Timer) ->
 handle_events(DoneEvents) -> lists:foreach(fun(Event) -> event_handler:execute(Event) end, DoneEvents).
 
 -ifdef(EUNIT).
+-include_lib("eunit/include/eunit.hrl").
 
 start_timer_test() ->
-  Pid = start_timer(test_factory:dummy_timer()),
+  Pid = start_timer(test_factory:dummy_timer_seed()),
   ?assert(is_pid(Pid)).
 
 -endif.
