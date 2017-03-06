@@ -6,8 +6,12 @@
         type_error_message/1
         ]).
 
-execute(#{type := complete_event, data := _Data}) -> ok;
-execute(#{type := post_slack, data := _Data}) -> ok;
+execute(#{type := complete_session, data := #{user_id := UserID, session_data := SessionData}}) -> 
+  session_log_server:save(UserID, SessionData),
+  ok;
+execute(#{type := post_slack, data := #{url := Url, content := Content}}) -> 
+  httpc:request(post, { Url, [], "application/json", Content }, [], []),
+  ok;
 execute(_) -> ok.
 
 check_type(#{type := complete_session, data := Data}) -> 
@@ -35,8 +39,7 @@ check_type_of_post_slack_test() ->
 
 check_type_of_complete_session_test() ->
   ?assertMatch(ok, check_type(#{type => complete_session, data => #{user_id => <<"useridhash">>}})),
-  ?assertMatch({error, no_user_id}, check_type(#{type => complete_session, data => wrong_data})),
-  ok.
+  ?assertMatch({error, no_user_id}, check_type(#{type => complete_session, data => wrong_data})).
 
 -endif.
 
