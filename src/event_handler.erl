@@ -7,7 +7,7 @@
         ]).
 
 execute(#{type := complete_session, data := #{user_id := UserID, session_data := SessionData}}) -> 
-  session_log_server:save(UserID, SessionData),
+  session_log_server:save(#{user_id => UserID, session_data => SessionData}),
   ok;
 execute(#{type := post_slack, data := #{url := Url, content := Content}}) -> 
   httpc:request(post, { Url, [], "application/json", Content }, [], []),

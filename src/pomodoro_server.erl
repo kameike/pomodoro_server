@@ -3,7 +3,7 @@
 
 %% Client APIs
 -export([
-         create_pomodoro_manager/0,
+         create_pomodoro_server/0,
          start_pomodoro/2,
          cancel_pomodoro/1,
          skip_rest/1
@@ -20,7 +20,7 @@
         ]).
 
 % Clients APIs
-create_pomodoro_manager() -> gen_server:start(pomodoro_manager, [#{}], []).
+create_pomodoro_server() -> gen_server:start(pomodoro_manager, [#{}], []).
 start_pomodoro(UserID, Timers) -> gen_server:cast(pmodoro_manager, {cancel, Timers, UserID}).
 cancel_pomodoro(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).
 skip_rest(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).

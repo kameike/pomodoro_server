@@ -1,8 +1,10 @@
 -module(util).
+-include("post_data.hrl").
 -export([
          puts/1,
          rand_hash/1,
          time/0,
+         next_page/1,
          decode_json/1
         ]).
 
@@ -26,6 +28,8 @@ rand_hash(Size) ->
   Base = base64:encode(Rand),
   WordSize = string:words(Base),
   string:sub_string(Base, 0, WordSize - 3).
+
+next_page(#pagination{from = From, count = Count}) -> #pagination{from = From + Count, count = Count}.
 
 -ifdef(EUNIT).
 

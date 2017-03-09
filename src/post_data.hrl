@@ -30,3 +30,9 @@
           url,
           content
          }).
+
+
+-record(pagination, {
+          from,
+          count
+         }).
