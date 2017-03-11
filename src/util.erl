@@ -3,7 +3,6 @@
 -export([
          puts/1,
          rand_hash/1,
-         time/0,
          next_page/1,
          decode_json/1
         ]).
@@ -13,7 +12,6 @@
 -endif.
 
 puts(Value) -> io:format(user, "~p~n", [Value]).
-time() -> ok.
 
 decode_json(Data) ->
   JsonData = jiffy:decode(Data, [return_maps]),
@@ -25,9 +23,9 @@ convert_binary_key_to_atom_key(JsonData) -> maps:fold(fun (Key, Value, AccIn) ->
 
 rand_hash(Size) ->
   Rand = crypto:strong_rand_bytes(Size),
-  Base = base64:encode(Rand),
-  WordSize = string:words(Base),
-  string:sub_string(Base, 0, WordSize - 3).
+  BinBase = base64:encode(Rand),
+  Base = binary_to_list(BinBase),
+  lists:sublist(Base, 1, Size).
 
 next_page(#pagination{from = From, count = Count}) -> #pagination{from = From + Count, count = Count}.
 
@@ -42,7 +40,13 @@ check_if_key_is_atom(JsonData) when is_list(JsonData) == true -> lists:map(fun(D
 check_if_key_is_atom(JsonData) when is_map(JsonData) == true ->
   lists:foreach(fun(Data) -> ?assert(is_atom(Data)) end, maps:keys(JsonData)),
   lists:foreach(fun(Data) -> check_if_key_is_atom(Data) end, maps:values(JsonData));
-check_if_key_is_atom(Data) -> ok.
+check_if_key_is_atom(_) -> ok.
+
+hash_test() ->
+  ?assertEqual(1, lists:flatlength(rand_hash(1))),
+  ?assertEqual(10, lists:flatlength(rand_hash(10))),
+  ?assertEqual(100, lists:flatlength(rand_hash(100))),
+  ok.
 
 -endif.
 
