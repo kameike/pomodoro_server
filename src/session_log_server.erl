@@ -66,7 +66,6 @@ sublist_test() ->
   Page3 = util:next_page(Page2),
   Page4 = util:next_page(Page3),
   Page5 = util:next_page(Page4),
-
   ?assertEqual(sublist(List,Page1), lists:seq(500, 529)),
   ?assertEqual(sublist(List,Page2), lists:seq(530, 559)),
   ?assertEqual(sublist(List,Page3), lists:seq(560, 589)),
