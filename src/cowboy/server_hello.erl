@@ -29,3 +29,10 @@ content_types_provided(Req, State) ->
 allowed_methods(Req, State) ->
   {[<<"POST">> ], Req, State}.
 
+
+-ifdef(EUNIT).
+
+-include_lib("eunit/include/eunit.hrl").
+
+
+-endif.

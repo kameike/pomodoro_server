@@ -20,10 +20,10 @@
         ]).
 
 % Clients APIs
-create_pomodoro_server() -> gen_server:start(pomodoro_manager, [#{}], []).
-start_pomodoro(UserID, Timers) -> gen_server:cast(pmodoro_manager, {cancel, Timers, UserID}).
-cancel_pomodoro(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).
-skip_rest(UserID) -> gen_server:cast(pmodoro_manager, {cancel, UserID}).
+create_pomodoro_server() -> gen_server:start({global, pomodoro_manager}, pmodoro_server, [#{}], []).
+start_pomodoro(UserID, Timers) -> gen_server:cast({global, pmodoro_manager}, {cancel, Timers, UserID}).
+cancel_pomodoro(UserID) -> gen_server:cast({global, pmodoro_manager}, {cancel, UserID}).
+skip_rest(UserID) -> gen_server:cast({global, pmodoro_manager}, {cancel, UserID}).
 
 %% gen_server behaviors
 init(State) -> {ok, State}.

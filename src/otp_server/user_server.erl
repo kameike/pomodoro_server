@@ -3,7 +3,7 @@
 
 %% Client APIs
 -export([
-         start/0,
+         create_user_server/0,
          create_user/0,
          user_exist/1
         ]).
@@ -19,18 +19,12 @@
         ]).
 
 %% Client APIs
-start() ->
-  case gen_server:start_link({global, user_server}, user_server, #{}, []) of
-    {ok, _} -> ok;
-    ignore -> ok;
-    {error, Error} -> throw(Error)
-  end,
+create_user_server() ->
+  {ok, _} = gen_server:start({global, user_server}, user_server, #{}, []),
   ok.
 
-create_user() ->
-  gen_server:call({global, user_server}, {create_user}).
-user_exist(UserID) ->
-  gen_server:call({global, user_server}, {find, #{user_id => UserID}}).
+create_user() -> gen_server:call({global, user_server}, {create_user}).
+user_exist(UserID) -> gen_server:call({global, user_server}, {find, #{user_id => UserID}}).
 
 %% gen_server behaviors
 
@@ -55,12 +49,16 @@ terminate(_, _) -> ok.
 -include_lib("eunit/include/eunit.hrl").
 
 create_user_test() ->
-  start(),
-  {ok, Data} = create_user(),
-  Result1 = user_exist(Data),
-  Result2 = user_exist("not_exist"),
-  ?assertMatch({ok, #{user_id := _, data := _}}, Result1),
-  ?assertMatch(not_found, Result2),
+  {reply, {ok, UserID}, State} = handle_call({create_user}, pid, #{}),
+  {ok, Updated} = maps:find(UserID,State),
+  ?assertMatch(#{created :=  _}, Updated),
+  ok.
+
+find_user_test() ->
+  UserID = util:rand_hash(40),
+  State = #{ UserID => #{created => erlang:system_time(microsecond)}},
+  {reply, Result, _} = handle_call( {find,#{user_id => UserID}}, pid, State),
+  ?assertMatch({ok, #{user_id := _, data := #{created := _}}}, Result),
   ok.
 
 -endif.

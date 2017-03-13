@@ -20,9 +20,9 @@
         ]).
 
 % Clients API
-create_session_log_server() -> gen_server:start(session_log_server, [#{}], []).
-save(Data) -> gen_server:cast(session_log_server, {log, Data}).
-load(Data) -> gen_server:call(session_log_server, {log, Data}).
+create_session_log_server() -> gen_server:start({global, session_log_server}, session_log_server, [#{}], []).
+save(Data) -> gen_server:cast({global, session_log_server}, {log, Data}).
+load(Data) -> gen_server:call({global, session_log_server}, {log, Data}).
 
 % gen_server behaviors
 init(State)-> {ok, State}.
