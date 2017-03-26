@@ -4,7 +4,6 @@
 %%%-------------------------------------------------------------------
 
 -module(server_app).
-
 -behaviour(application).
 
 %% Application callbacks
@@ -15,6 +14,7 @@
 %%====================================================================
 
 start(_Type, _Args) ->
+  init(),
   inets:start(),
   Dispatch = cowboy_router:compile([{host(), route_list()}]),
   {ok, _} = cowboy:start_clear(aip, 100,
@@ -31,7 +31,10 @@ host() ->
 
 route_list() ->
   [
+   {"/pomodoro/:method/:user_id", cowboy_pomodoro, []},
+   {"/user/:method", cowboy_user, []},
    {"/hello", server_hello, []},
+   {"/session/:user_id", cowboy_session_log, []},
    {"/slack_me", server_post_slack, []}
   ].
 
@@ -43,3 +46,13 @@ stop(_State) ->
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
+init() ->
+  pomodoro_server:create_pomodoro_server(),
+  session_log_server:create_session_log_server(),
+  user_server:create_user_server(),
+  ok.
+
+
+
+

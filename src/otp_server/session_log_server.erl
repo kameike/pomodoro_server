@@ -1,5 +1,5 @@
 -module(session_log_server).
--include("post_data.hrl").
+-include("../post_data.hrl").
 -behavior(gen_server).
 
 %% OTP gen_server behaviors
@@ -15,14 +15,20 @@
 
 -export([
          create_session_log_server/0,
-         load/1,
+         read/1,
          save/1
         ]).
 
 % Clients API
-create_session_log_server() -> gen_server:start({global, session_log_server}, session_log_server, [#{}], []).
-save(Data) -> gen_server:cast({global, session_log_server}, {log, Data}).
-load(Data) -> gen_server:call({global, session_log_server}, {log, Data}).
+create_session_log_server() ->
+  {ok, _} = gen_server:start({global, session_log_server}, session_log_server, #{}, []),
+  ok.
+
+save(Data) -> 
+  gen_server:cast({global, session_log_server}, {save, Data}).
+
+read(Data) -> 
+  gen_server:call({global, session_log_server}, {read, Data}).
 
 % gen_server behaviors
 init(State)-> {ok, State}.
@@ -30,17 +36,19 @@ init(State)-> {ok, State}.
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
-handle_cast(#{user_id := UserID, session_data := SessionData}, LogData) ->
+handle_cast({save, #{user_id := UserID, session_data := SessionData}}, LogData) ->
+  util:puts("tyr save"),
   PrevUserLogList = user_log(maps:find(UserID, LogData)),
   NewUserLogList = lists:append([PrevUserLogList, [SessionData]]),
-  {noreply, maps:puts(UserID, NewUserLogList, LogData)};
-handle_cast(_, State) -> {noreply, State}.
+  NewLogData = maps:put(UserID, NewUserLogList, LogData),
+  {noreply, NewLogData}.
 
-handle_call({log, #{user_id := UserID, pagination := Pagination}}, _, LogData) -> 
+handle_call({read, #{user_id := UserID, pagination := Pagination}}, _, LogData) -> 
+  util:puts(LogData),
+  util:puts(UserID),
   AllUesrLog = user_log(maps:find(UserID, LogData)),
   Value = #{ pagination => Pagination, result => sublist(AllUesrLog, Pagination) },
-  {reply, Value, LogData};
-handle_call(_, _, State) -> {reply, error, State}.
+  {reply, Value, LogData}.
 
 terminate(_, _) -> ok.
 handle_info(_, _) -> ok.
@@ -60,7 +68,6 @@ user_log(error) -> [].
 
 sublist_test() ->
   List = lists:seq(500, 600),
-
   Page1 = #pagination{from = 1, count = 30},
   Page2 = util:next_page(Page1),
   Page3 = util:next_page(Page2),

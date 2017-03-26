@@ -1,5 +1,5 @@
 -module(request_parser).
--include("post_data.hrl").
+-include("../post_data.hrl").
 
 -ifdef(EUNIT).
 -include_lib("eunit/include/eunit.hrl").
@@ -28,15 +28,14 @@ create_timers(Req, UserID) ->
 
 %% privaate
 work_start_timer_seed_from_json(JsonData, _UserID) ->
-  #{event := #{ work_done := Events}} = JsonData,
-
+  #{event := #{ start := Events}} = JsonData,
   #timer_seed{
      duration = 0,
      done_events = timer_event_parser:parse_events(Events)
   }.
 
 rest_done_timer_seed_from_json(JsonData, _UserID) ->
-  #{event := #{ work_done := Events}} = JsonData,
+  #{event := #{ rest_done := Events}} = JsonData,
   Property = get_property(maps:find(property, JsonData)),
   #{work_duration := WorkDuration, rest_duration := RestDuration} = Property,
 

@@ -4,7 +4,7 @@
 %% Client APIs
 -export([
          create_pomodoro_server/0,
-         start_pomodoro/2,
+         start_pomodoro/1,
          cancel_pomodoro/1,
          skip_rest/1
         ]).
@@ -20,10 +20,18 @@
         ]).
 
 % Clients APIs
-create_pomodoro_server() -> gen_server:start({global, pomodoro_manager}, pmodoro_server, [#{}], []).
-start_pomodoro(UserID, Timers) -> gen_server:cast({global, pmodoro_manager}, {cancel, Timers, UserID}).
-cancel_pomodoro(UserID) -> gen_server:cast({global, pmodoro_manager}, {cancel, UserID}).
-skip_rest(UserID) -> gen_server:cast({global, pmodoro_manager}, {cancel, UserID}).
+create_pomodoro_server() ->
+  {ok, _} = gen_server:start({global, pomodoro_manager}, pomodoro_server, #{}, []),
+  ok.
+
+start_pomodoro(#{timers := Timers, user_id := UserID}) ->
+  gen_server:cast({global, pomodoro_manager}, {start, Timers, UserID}).
+
+cancel_pomodoro(UserID) ->
+  gen_server:cast({global, pomodoro_manager}, {cancel, UserID}).
+
+skip_rest(UserID) ->
+  gen_server:cast({global, pomodoro_manager}, {cancel, UserID}).
 
 %% gen_server behaviors
 init(State) -> {ok, State}.
@@ -45,10 +53,14 @@ handle_cast({cancel, UserID}, UserIDMap) ->
   {noreply, Map2}.
 
 %% Private methos
-cancel_timer({ok, Timers}) -> lists:map(fun(Timer) -> post_timer:cancel_timer(Timer) end, Timers);
-cancel_timer(error) -> ok.
+cancel_timer({ok, Timers}) ->
+  lists:map(fun(Timer) -> post_timer:cancel_timer(Timer) end, Timers);
 
-start_timers(Timers) -> lists:map(fun(Timer)-> post_timer:start_timer(Timer) end, Timers).
+cancel_timer(error) ->
+  ok.
+
+start_timers(Timers) ->
+  lists:map(fun(Timer)-> post_timer:start_timer(Timer) end, Timers).
 
 -ifdef(EUNIT).
 -include_lib("eunit/include/eunit.hrl").

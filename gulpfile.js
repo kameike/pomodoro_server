@@ -7,4 +7,6 @@ gulp.task('eunit', shell.task([
 
 gulp.task('watch', function () {
   gulp.watch('./src/**/*.erl', ['eunit'])
+  gulp.watch('./src/**/*.hrl', ['eunit'])
+  gulp.watch('./test/**/*.erl', ['eunit'])
 })

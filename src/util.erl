@@ -24,8 +24,16 @@ convert_binary_key_to_atom_key(JsonData) -> maps:fold(fun (Key, Value, AccIn) ->
 rand_hash(Size) ->
   Rand = crypto:strong_rand_bytes(Size),
   BinBase = base64:encode(Rand),
-  Base = binary_to_list(BinBase),
-  lists:sublist(Base, 1, Size).
+  HashBase = binary_to_list(BinBase),
+  Hash = lists:map(fun(Char) ->
+                       case [Char] of
+                         "/" -> "_";
+                         "+" -> "-";
+                         Any -> Any
+                       end
+                   end,
+                   HashBase),
+  binary:list_to_bin(lists:sublist(Hash, 1, Size)).
 
 next_page(#pagination{from = From, count = Count}) -> #pagination{from = From + Count, count = Count}.
 
@@ -43,9 +51,9 @@ check_if_key_is_atom(JsonData) when is_map(JsonData) == true ->
 check_if_key_is_atom(_) -> ok.
 
 hash_test() ->
-  ?assertEqual(1, lists:flatlength(rand_hash(1))),
-  ?assertEqual(10, lists:flatlength(rand_hash(10))),
-  ?assertEqual(100, lists:flatlength(rand_hash(100))),
+  ?assertEqual(1, lists:flatlength(binary_to_list(rand_hash(1)))),
+  ?assertEqual(10, lists:flatlength(binary_to_list(rand_hash(10)))),
+  ?assertEqual(100, lists:flatlength(binary_to_list(rand_hash(100)))),
   ok.
 
 -endif.

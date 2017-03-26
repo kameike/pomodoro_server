@@ -21,4 +21,8 @@
  {<<"ranch">>,
   {git,"https://github.com/ninenines/ranch",
        {ref,"40809cd2b257a8a53bcb5588ecaa88cc5381ff5c"}},
-  1}].
+  1},
+ {<<"sync">>,
+  {git,"git://github.com/rustyio/sync.git",
+       {ref,"20846b02126846d69f1f4b2d00fcad580ef5c0d0"}},
+  0}].

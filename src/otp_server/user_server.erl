@@ -5,6 +5,7 @@
 -export([
          create_user_server/0,
          create_user/0,
+         all_users/0,
          user_exist/1
         ]).
 
@@ -23,12 +24,18 @@ create_user_server() ->
   {ok, _} = gen_server:start({global, user_server}, user_server, #{}, []),
   ok.
 
-create_user() -> gen_server:call({global, user_server}, {create_user}).
-user_exist(UserID) -> gen_server:call({global, user_server}, {find, #{user_id => UserID}}).
+create_user() ->
+  gen_server:call({global, user_server}, create_user).
+
+user_exist(UserID) ->
+  gen_server:call({global, user_server}, {find, #{user_id => UserID}}).
+
+all_users() ->
+  gen_server:call({global, user_server}, all).
 
 %% gen_server behaviors
 
-handle_call({create_user}, _From, State) ->
+handle_call(create_user, _From, State) ->
   UserID = util:rand_hash(30),
   NewState = maps:put(UserID, #{created => erlang:system_time(microsecond)}, State),
   {reply, {ok, UserID}, NewState};
@@ -37,7 +44,10 @@ handle_call({find, #{user_id := UserID}}, _From, State) ->
              {ok, Data} -> {ok, #{user_id=> UserID, data => Data}};
              error -> not_found
            end,
-  {reply, Result, State}.
+  {reply, Result, State};
+handle_call(all, _From, State) ->
+  {reply, {ok, maps:keys(State)}, State}.
+
 
 handle_info(_, _) -> ok.
 handle_cast(_, State) -> {noreply, State}.
