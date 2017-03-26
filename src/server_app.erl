@@ -33,7 +33,7 @@ route_list() ->
   [
    {"/pomodoro/:method/:user_id", cowboy_pomodoro, []},
    {"/user/:method", cowboy_user, []},
-   {"/hello", server_hello, []},
+   {"/", server_hello, []},
    {"/session/:user_id", cowboy_session_log, []},
    {"/slack_me", server_post_slack, []}
   ].
