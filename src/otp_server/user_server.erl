@@ -37,7 +37,7 @@ all_users() ->
 
 handle_call(create_user, _From, State) ->
   UserID = util:rand_hash(30),
-  NewState = maps:put(UserID, #{created => erlang:system_time(microsecond)}, State),
+  NewState = maps:put(UserID, #{created => erlang:system_time(millisecond)}, State),
   {reply, {ok, UserID}, NewState};
 handle_call({find, #{user_id := UserID}}, _From, State) ->
   Result = case maps:find(UserID, State) of
