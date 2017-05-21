@@ -95,6 +95,5 @@ test_work_done_timer_seed(JsonData, Duration, EventNum, Fun) ->
   ?assert(is_list(ResultDoneEvents)),
   ?assertEqual(lists:flatlength(ResultDoneEvents), EventNum),
   ok.
-
 -endif.
 
