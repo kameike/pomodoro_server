@@ -31,10 +31,7 @@ host() ->
 
 route_list() ->
   [
-   {"/pomodoro/:method/:user_id", cowboy_pomodoro, []},
-   {"/user/:method", cowboy_user, []},
-   {"/", server_hello, []},
-   {"/session/:user_id", cowboy_session_log, []},
+   {"/timer/[:hash]", cowboy_timer_handler, []},
    {"/slack_me", server_post_slack, []}
   ].
 

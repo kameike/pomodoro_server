@@ -27,8 +27,8 @@ rand_hash(Size) ->
   HashBase = binary_to_list(BinBase),
   Hash = lists:map(fun(Char) ->
                        case [Char] of
-                         "/" -> "_";
-                         "+" -> "-";
+                         "/" -> "A";
+                         "+" -> "B";
                          Any -> Any
                        end
                    end,
