@@ -16,6 +16,9 @@
 start(_Type, _Args) ->
   init(),
   inets:start(),
+
+  ets:new(timers, [named_table, public, set]),
+
   Dispatch = cowboy_router:compile([{host(), route_list()}]),
   {ok, _} = cowboy:start_clear(aip, 100,
                                config(),
@@ -45,9 +48,6 @@ stop(_State) ->
 %%====================================================================
 
 init() ->
-  pomodoro_server:create_pomodoro_server(),
-  session_log_server:create_session_log_server(),
-  user_server:create_user_server(),
   ok.
 
 

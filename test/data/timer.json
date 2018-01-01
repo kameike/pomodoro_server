@@ -1,12 +1,11 @@
 {
-  "duration": 3600,
+  "duration": 3000000,
   "hocks": [
-    {"url": "https://kameike.net"},
-    {"url": "https://kameike.net"},
-    {"url": "https://kameike.net"},
-    {"url": "https://kameike.net"},
-    {"url": "https://kameike.net"},
-    {"url": "https://kameike.net"},
-    {"url": "https://kameike.net"}
+    {"url": "localhost:8080"},
+    {"url": "localhost:8080"},
+    {"url": "localhost:8080"},
+    {"url": "localhost:8080"},
+    {"url": "localhost:8080"},
+    {"url": "localhost:8080"}
   ]
 }
